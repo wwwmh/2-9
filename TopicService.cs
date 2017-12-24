@@ -74,7 +74,7 @@ namespace Xmu.Crms.Services.Group1
         }
 
         //银高
-        public List<Topic> ListTopicBySeminarId(long seminarId)
+        public IList<Topic> ListTopicBySeminarId(long seminarId)
         {
             if (seminarId < 0)
                 throw new System.ArgumentException("Parameter format error", "seminarId");

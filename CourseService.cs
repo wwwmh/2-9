@@ -123,15 +123,25 @@ namespace Xmu.Crms.Services.Group1
                 throw new ArgumentException("Parameter format error", "courseId");
             else
             {
-                var c = from s in _db.Course where s.Id == courseId select s;
+                var c = _db.Course.Where(p => p.Id == courseId).SingleOrDefault();
                 if (c == null)
                     throw new CourseNotFoundException();
                 else
                 {
-                    _db.Course.Update(course);
-                    _db.SaveChanges();
+                    c.Id = course.Id;
+                    c.Name = course.Name;
+                    c.StartDate = course.StartDate;
+                    c.EndDate = course.EndDate;
+                    c.Teacher = course.Teacher;
+                    c.Description = course.Description;
+                    c.ReportPercentage = course.ReportPercentage;
+                    c.PresentationPercentage = course.PresentationPercentage;
+                    c.FivePointPercentage = course.FivePointPercentage;
+                    c.FourPointPercentage = course.FourPointPercentage;
+                    c.ThreePointPercentage = course.ThreePointPercentage;
                 }
             }
+            _db.SaveChanges();
         }
 
         //铭辉

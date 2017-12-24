@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -51,6 +51,7 @@ namespace Xmu.Crms.Services.Group1
             }
 
             _db.Attendences.Add(att);
+            _db.SaveChanges();
 
         }
 

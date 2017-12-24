@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
@@ -49,7 +49,10 @@ namespace Xmu.Crms.Services.Group1
                 if (t == null)
                     throw new TopicNotFoundException();
                 else
+                {
                     _db.Topic.Update(topic);
+                    _db.SaveChanges();
+                }
             }
         }
 
@@ -61,6 +64,7 @@ namespace Xmu.Crms.Services.Group1
             else
             {
                 _db.Topic.Remove(_db.Topic.Find(topicId));
+                _db.SaveChanges();
             }
         }
 
@@ -86,6 +90,7 @@ namespace Xmu.Crms.Services.Group1
             else
             {
                 _db.Topic.Add(topic);
+                _db.SaveChanges();
                 return topic.Id;
             }
         }
@@ -100,6 +105,7 @@ namespace Xmu.Crms.Services.Group1
             var topic = _db.SeminarGroupTopic.Where(p => p.Topic.Id == topicId).Where(r => r.SeminarGroup.Id == groupId).SingleOrDefault();
 
             _db.SeminarGroupTopic.Remove(topic);
+            _db.SaveChanges();
 
         }
 
@@ -111,6 +117,7 @@ namespace Xmu.Crms.Services.Group1
             var topic = _db.SeminarGroupTopic.Where(p => p.Topic.Id == topicId).SingleOrDefault();
 
             _db.SeminarGroupTopic.Remove(topic);
+            _db.SaveChanges();
         }
 
         //昶辉
@@ -145,6 +152,7 @@ namespace Xmu.Crms.Services.Group1
 
             _db.SeminarGroupTopic.Remove(groupTopic);
             _db.StudentScoreGroup.Remove(studentScore);
+            _db.SaveChanges();
         }
     }
 }

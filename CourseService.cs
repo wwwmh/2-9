@@ -20,42 +20,62 @@ namespace Xmu.Crms.Services.Group1
         /// <returns>null 课程列表</returns>
         /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
         /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
-        public List<Course> ListCourseByUserId(long userId)
+         public List<Course> ListCourseByUserId(long userId)
         {
             if (userId < 0)  //ID格式错误
                 throw new ArgumentException("Parameter format error", "userId");
 
             else   //ID格式正确
             {
-                var classid = from s in _db.CourseSelection where s.Student.Id == userId select s.ClassInfo.Id; //从CourseSelection根据userid选出课堂
+                var type = from s in _db.UserInfo where s.Id == userId select s.Type;
 
-                if (classid == null)   //未找到
-                    throw new CourseNotFoundException();
-
-                else   //找到userid的选的课堂
+                foreach (var tt in type)
                 {
-                    foreach (long obj in classid)
+                    if (tt == Xmu.Crms.Shared.Models.Type.Student)
                     {
-                        var courseid = from s in _db.ClassInfo where s.Id == obj select s.Course.Id;  //从ClassInfo找出对应classid的courseid
+                        var classid = from s in _db.CourseSelection where s.Student.Id == userId select s.ClassInfo.Id; //从CourseSelection根据userid选出课堂
 
-                        if (courseid == null)  //未根据classid从ClassInfo表找到课程
+                        if (classid == null)   //未找到
                             throw new CourseNotFoundException();
 
-                        else       //根据classid找到课程
+                        else   //找到userid的选的课堂
                         {
-                            foreach (long obj2 in courseid)
+                            foreach (long obj in classid)
                             {
-                                var course = from s in _db.Course where s.Id == obj2 select s;  //从Course表根据courseid找Course
-                                if (course == null)
+                                var courseid = from s in _db.ClassInfo where s.Id == obj select s.Course.Id;  //从ClassInfo找出对应classid的courseid
+
+                                if (courseid == null)  //未根据classid从ClassInfo表找到课程
                                     throw new CourseNotFoundException();
-                                else
+
+                                else       //根据classid找到课程
                                 {
-                                    return course.ToList<Course>();
+                                    foreach (long obj2 in courseid)
+                                    {
+                                        var course = from s in _db.Course where s.Id == obj2 select s;  //从Course表根据courseid找Course
+                                        if (course == null)
+                                            throw new CourseNotFoundException();
+                                        else
+                                        {
+                                            return course.ToList<Course>();
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
+                    else if (tt == Xmu.Crms.Shared.Models.Type.Teacher)
+                    {
+                        var c = from s in _db.Course where s.Teacher.Id == userId select s;
+                        if (c == null)
+                            throw new CourseNotFoundException();
+                        else
+                            return c.ToList<Course>();
+                    }
+                    else if (tt == Xmu.Crms.Shared.Models.Type.Unbinded)
+                        throw new CourseNotFoundException();
                 }
+
+
             }
             throw new CourseNotFoundException();
         }

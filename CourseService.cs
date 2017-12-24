@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xmu.Crms.Shared.Exceptions;
@@ -7,7 +7,7 @@ using Xmu.Crms.Shared.Service;
 
 namespace Xmu.Crms.Services.Group1
 {
-    public class CourseService: ICourseService
+    public class CourseService : ICourseService
     {
         private readonly CrmsContext _db;
         public CourseService(CrmsContext db)
@@ -20,7 +20,7 @@ namespace Xmu.Crms.Services.Group1
         /// <returns>null 课程列表</returns>
         /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
         /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
-         public List<Course> ListCourseByUserId(long userId)
+        public List<Course> ListCourseByUserId(long userId)
         {
             if (userId < 0)  //ID格式错误
                 throw new ArgumentException("Parameter format error", "userId");
@@ -90,7 +90,8 @@ namespace Xmu.Crms.Services.Group1
                 throw new ArgumentException("Parameter format error", "userId");
             else
             {
-                _db.Course.Add(course);   
+                _db.Course.Add(course);
+                _db.SaveChanges();
                 return course.Id;
             }
         }
@@ -126,7 +127,10 @@ namespace Xmu.Crms.Services.Group1
                 if (c == null)
                     throw new CourseNotFoundException();
                 else
+                {
                     _db.Course.Update(course);
+                    _db.SaveChanges();
+                }
             }
         }
 
@@ -145,7 +149,10 @@ namespace Xmu.Crms.Services.Group1
                 if (c == null)    //未找到课程
                     throw new CourseNotFoundException();
                 else
+                {
                     _db.Course.Remove(c);
+                    _db.SaveChanges();
+                }
             }
         }
 
@@ -185,15 +192,15 @@ namespace Xmu.Crms.Services.Group1
                 throw new ClassNotFoundException();
             else
             {
-                foreach(long obj in teacherid)
+                foreach (long obj in teacherid)
                 {
                     var courseid = from s in _db.Course where s.Teacher.Id == obj select s.Id;
 
-                    if(courseid==null)
+                    if (courseid == null)
                         throw new ClassNotFoundException();
                     else
                     {
-                        foreach(long obj2 in courseid)
+                        foreach (long obj2 in courseid)
                         {
                             var c = from s in _db.ClassInfo where s.Course.Id == obj2 select s;
 

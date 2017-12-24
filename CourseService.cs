@@ -20,7 +20,7 @@ namespace Xmu.Crms.Services.Group1
         /// <returns>null 课程列表</returns>
         /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
         /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
-        public List<Course> ListCourseByUserId(long userId)
+        public IList<Course> ListCourseByUserId(long userId)
         {
             if (userId < 0)  //ID格式错误
                 throw new ArgumentException("Parameter format error", "userId");
@@ -169,7 +169,7 @@ namespace Xmu.Crms.Services.Group1
         //铭辉
         /// 根据课程名称获取课程列表.
         /// <returns>list 课程列表</returns>
-        public List<Course> ListCourseByCourseName(string courseName)
+        public IList<Course> ListCourseByCourseName(string courseName)
         {
             var course = from s in _db.Course where s.Name == courseName select s;
 
@@ -182,7 +182,7 @@ namespace Xmu.Crms.Services.Group1
         //铭辉
         /// 按课程名称获取班级列表.
         /// <returns>list 班级列表</returns>
-        public List<ClassInfo> ListClassByCourseName(string courseName)
+        public IList<ClassInfo> ListClassByCourseName(string courseName)
         {
             var c = from s in _db.ClassInfo where s.Name == courseName select s;
             if (c == null)
@@ -194,7 +194,7 @@ namespace Xmu.Crms.Services.Group1
         //铭辉
         /// 按教师名称获取班级列表.
         /// <returns>list 班级列表</returns>
-        public List<ClassInfo> ListClassByTeacherName(string teacherName)
+        public IList<ClassInfo> ListClassByTeacherName(string teacherName)
         {
             var teacherid = from s in _db.UserInfo where s.Name == teacherName select s.Id;
 
@@ -229,7 +229,7 @@ namespace Xmu.Crms.Services.Group1
         /// 根据教师ID获取班级列表.
         /// <returns>list 班级列表</returns>
         /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
-        public List<ClassInfo> ListClassByUserId(long userId)
+        public IList<ClassInfo> ListClassByUserId(long userId)
         {
             if (userId < 0)   //ID格式错误
                 throw new ArgumentException("Parameter format error", "userId");

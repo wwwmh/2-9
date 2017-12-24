@@ -45,15 +45,20 @@ namespace Xmu.Crms.Services.Group1
                 throw new System.ArgumentException("Parameter format error", "topicId");
             else
             {
-                var t = from s in _db.Topic where s.Id == topicId select s;
+                var t = _db.Topic.Where(p => p.Id == topicId).SingleOrDefault();
                 if (t == null)
                     throw new TopicNotFoundException();
                 else
                 {
-                    _db.Topic.Update(topic);
-                    _db.SaveChanges();
+                    t.Id = topic.Id;
+                    t.Name = topic.Name;
+                    t.Description = topic.Description;
+                    t.GroupNumberLimit = topic.GroupNumberLimit;
+                    t.GroupStudentLimit = topic.GroupStudentLimit;
+                    t.Seminar = topic.Seminar;
                 }
             }
+            _db.SaveChanges();
         }
 
         //银高

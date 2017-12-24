@@ -56,7 +56,7 @@ namespace Xmu.Crms.Services.Group1
         }
 
         //昶辉
-        public List<Attendance> ListAttendanceById(long classId, long seminarId)
+        public IList<Attendance> ListAttendanceById(long classId, long seminarId)
         {
             if (classId < 0 || seminarId < 0)
                 throw new ArgumentException();
@@ -107,7 +107,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         //根据用户名获取用户ID
-        public List<long> ListUserIdByUserName(string userName)
+        public IList<long> ListUserIdByUserName(string userName)
         {
             List<long> idList = new List<long>();
             var userlist = _db.UserInfo.Where(p => p.Name == userName).ToList();
@@ -153,7 +153,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         //按班级ID、学号开头、姓名开头获取学生列表.
-        public List<UserInfo> ListUserByClassId(long classId, string numBeginWith, string nameBeginWith)
+        public IList<UserInfo> ListUserByClassId(long classId, string numBeginWith, string nameBeginWith)
         {
             List<UserInfo> studentlist = new List<UserInfo>();
             if (classId < 0)
@@ -181,7 +181,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         //根据用户名获取用户列表.
-        public List<UserInfo> ListUserByUserName(string userName)
+        public IList<UserInfo> ListUserByUserName(string userName)
         {
             var userlist = _db.UserInfo.Where(p => p.Name == userName).ToList();
             return userlist;
@@ -189,7 +189,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         //获取讨论课所在的班级的出勤学生名单
-        public List<UserInfo> ListPresentStudent(long seminarId, long classId)
+        public IList<UserInfo> ListPresentStudent(long seminarId, long classId)
         {
 
             if (seminarId < 0 || classId < 0)
@@ -230,7 +230,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         // 获取讨论课所在的班级的迟到学生名单.
-        public List<UserInfo> ListLateStudent(long seminarId, long classId)
+        public IList<UserInfo> ListLateStudent(long seminarId, long classId)
         {
             if (seminarId < 0 || classId < 0)
             {
@@ -268,7 +268,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         // 获取讨论课所在班级缺勤学生名单.
-        public List<UserInfo> ListAbsenceStudent(long seminarId, long classId)
+        public IList<UserInfo> ListAbsenceStudent(long seminarId, long classId)
         {
             if (seminarId < 0 || classId < 0)
             {
@@ -306,7 +306,7 @@ namespace Xmu.Crms.Services.Group1
 
         //吴帅
         //根据教师名称列出课程名称
-        public List<Course> ListCourseByTeacherName(string teacherName)
+        public IList<Course> ListCourseByTeacherName(string teacherName)
         {
 
             var courselist = _db.Course.Where(p => p.Teacher.Name == teacherName).ToList();

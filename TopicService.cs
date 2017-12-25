@@ -12,9 +12,7 @@ namespace Xmu.Crms.Services.Group1
 
     public class TopicService : ITopicService
     {
-        AttendanceStatus absent = AttendanceStatus.Absent;
-        AttendanceStatus present = AttendanceStatus.Present;
-        AttendanceStatus late = AttendanceStatus.Late;
+
         private readonly CrmsContext _db;
         public TopicService(CrmsContext db)
         {
@@ -22,7 +20,6 @@ namespace Xmu.Crms.Services.Group1
 
         }
 
-        //银高
         public Topic GetTopicByTopicId(long topicId)//按topicId获取topic.
         {
             if (topicId < 0)
@@ -38,7 +35,6 @@ namespace Xmu.Crms.Services.Group1
             }
         }
 
-        //银高
         public void UpdateTopicByTopicId(long topicId, Topic topic)
         {
             if (topicId < 0)
@@ -61,7 +57,6 @@ namespace Xmu.Crms.Services.Group1
             _db.SaveChanges();
         }
 
-        //银高
         public void DeleteTopicByTopicId(long topicId)
         {
             if (topicId < 0)
@@ -73,7 +68,6 @@ namespace Xmu.Crms.Services.Group1
             }
         }
 
-        //银高
         public IList<Topic> ListTopicBySeminarId(long seminarId)
         {
             if (seminarId < 0)
@@ -87,7 +81,6 @@ namespace Xmu.Crms.Services.Group1
             }
         }
 
-        //银高
         public long InsertTopicBySeminarId(long seminarId, Topic topic)
         {
             if (seminarId < 0)
@@ -100,21 +93,17 @@ namespace Xmu.Crms.Services.Group1
             }
         }
 
-        //昶辉
-        public void DeleteTopicById(long groupId, long topicId)
+        public void DeleteSeminarGroupTopicById(long groupId, long topicId)
         {
-
-            if (groupId < 0) throw new System.ArgumentException("Parameter format error", "groupId");
             if (topicId < 0) throw new System.ArgumentException("Parameter format error", "topicId");
+            if (groupId < 0) throw new System.ArgumentException("Parameter format error", "groupId");
 
-            var topic = _db.SeminarGroupTopic.Where(p => p.Topic.Id == topicId).Where(r => r.SeminarGroup.Id == groupId).SingleOrDefault();
+            var topic = _db.SeminarGroupTopic.Where(p => (p.Topic.Id == topicId && p.SeminarGroup.Id == groupId)).SingleOrDefault();
 
             _db.SeminarGroupTopic.Remove(topic);
             _db.SaveChanges();
-
         }
 
-        //昶辉
         public void DeleteSeminarGroupTopicByTopicId(long topicId)
         {
             if (topicId < 0) throw new System.ArgumentException("Parameter format error", "topicId");
@@ -125,7 +114,6 @@ namespace Xmu.Crms.Services.Group1
             _db.SaveChanges();
         }
 
-        //昶辉
         public SeminarGroupTopic GetSeminarGroupTopicById(long topicId, long groupId)
         {
 
@@ -145,7 +133,17 @@ namespace Xmu.Crms.Services.Group1
 
         }
 
-        //昶辉
+        public IList<SeminarGroupTopic> ListSeminarGroupTopicByGroupId(long groupId)
+        {
+            if (groupId < 0)
+                throw new ArgumentException("Parameter format error", "groupId");
+            else
+            {
+                var sgt = from s in _db.SeminarGroupTopic where s.SeminarGroup.Id == groupId select s;
+                return sgt.ToList<SeminarGroupTopic>();
+            }
+        }
+
         public void DeleteTopicBySeminarId(long seminarId)
         {
             if (seminarId < 0) throw new System.ArgumentException("Parameter format error", "seminarId");

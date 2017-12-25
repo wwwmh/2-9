@@ -15,11 +15,15 @@ namespace Xmu.Crms.Services.Group1
             _db = db;
         }
 
-        //铭辉
-        /// 按userId获取与当前用户相关联的课程列表.
-        /// <returns>null 课程列表</returns>
-        /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
-        /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
+        public long InsertClassById(long courseId, ClassInfo classInfo)
+        {
+            var c = _db.Course.Find(courseId) ?? throw new CourseNotFoundException();
+            classInfo.Course = c;
+            var ent = _db.ClassInfo.Add(classInfo);
+            _db.SaveChanges();
+            return ent.Entity.Id;
+        }
+
         public IList<Course> ListCourseByUserId(long userId)
         {
             if (userId < 0)  //ID格式错误
@@ -80,25 +84,20 @@ namespace Xmu.Crms.Services.Group1
             throw new CourseNotFoundException();
         }
 
-        //铭辉
-        /// 按userId创建课程.
-        /// <returns>courseId 新建课程的id</returns>
-        /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
         public long InsertCourseByUserId(long userId, Course course)
         {
             if (userId < 0)   //ID格式错误
                 throw new ArgumentException("Parameter format error", "userId");
             else
             {
-                _db.Course.Add(course);
+                var u = _db.UserInfo.Find(userId) ?? throw new UserNotFoundException();
+                course.Teacher = u;
+                var ent = _db.Course.Add(course);
                 _db.SaveChanges();
-                return course.Id;
+                return ent.Entity.Id;
             }
         }
 
-        //铭辉
-        /// 按courseId获取课程 .
-        /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
         /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
         public Course GetCourseByCourseId(long courseId)
         {
@@ -115,8 +114,6 @@ namespace Xmu.Crms.Services.Group1
             }
         }
 
-        //铭辉
-        /// 传入courseId和course信息修改course信息.
         public void UpdateCourseByCourseId(long courseId, Course course)
         {
             if (courseId < 0)
@@ -144,10 +141,6 @@ namespace Xmu.Crms.Services.Group1
             _db.SaveChanges();
         }
 
-        //铭辉
-        /// 按courseId删除课程.
-        /// <exception cref="T:System.ArgumentException">courseId格式错误时抛出</exception>
-        /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
         public void DeleteCourseByCourseId(long courseId)
         {
             if (courseId < 0)   //ID格式错误
@@ -166,9 +159,6 @@ namespace Xmu.Crms.Services.Group1
             }
         }
 
-        //铭辉
-        /// 根据课程名称获取课程列表.
-        /// <returns>list 课程列表</returns>
         public IList<Course> ListCourseByCourseName(string courseName)
         {
             var course = from s in _db.Course where s.Name == courseName select s;
@@ -179,9 +169,6 @@ namespace Xmu.Crms.Services.Group1
                 return course.ToList<Course>();
         }
 
-        //铭辉
-        /// 按课程名称获取班级列表.
-        /// <returns>list 班级列表</returns>
         public IList<ClassInfo> ListClassByCourseName(string courseName)
         {
             var c = from s in _db.ClassInfo where s.Name == courseName select s;
@@ -191,9 +178,6 @@ namespace Xmu.Crms.Services.Group1
                 return c.ToList<ClassInfo>();
         }
 
-        //铭辉
-        /// 按教师名称获取班级列表.
-        /// <returns>list 班级列表</returns>
         public IList<ClassInfo> ListClassByTeacherName(string teacherName)
         {
             var teacherid = from s in _db.UserInfo where s.Name == teacherName select s.Id;
@@ -225,31 +209,16 @@ namespace Xmu.Crms.Services.Group1
             throw new ClassNotFoundException();
         }
 
-        //铭辉
-        /// 根据教师ID获取班级列表.
-        /// <returns>list 班级列表</returns>
-        /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
-        public IList<ClassInfo> ListClassByUserId(long userId)
+        public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
-            if (userId < 0)   //ID格式错误
-                throw new ArgumentException("Parameter format error", "userId");
-            else
+            var teacher = from s in _db.UserInfo where s.Name == teacherName select s.Id;
+            foreach(long obj in teacher)
             {
-                var courseid = from s in _db.Course where s.Teacher.Id == userId select s.Id;
-
-                if (courseid == null)
-                    throw new ClassNotFoundException();
-                else
+                var course = from s in _db.Course where s.Name == courseName && s.Teacher.Id == obj select s.Id;
+                foreach(long obj2 in course)
                 {
-                    foreach (long obj in courseid)
-                    {
-                        var c = from s in _db.ClassInfo where s.Course.Id == obj select s;
-
-                        if (c == null)
-                            throw new ClassNotFoundException();
-                        else
-                            return c.ToList<ClassInfo>();
-                    }
+                    var c = from s in _db.ClassInfo where s.Course.Id == obj2 select s;
+                    return c.ToList<ClassInfo>();
                 }
             }
             throw new ClassNotFoundException();
